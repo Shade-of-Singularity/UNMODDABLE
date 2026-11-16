@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BOOTSTRAP/Bootstrap.csproj" DisplayName="Bootstrap" />
+  <Project Path="OUTBREAK/Outbreak.csproj" DisplayName="Outbreak" />
+  <Project Path="UNMODDABLE/Unmoddable.csproj" DisplayName="Unmoddable" />
+</Solution>
