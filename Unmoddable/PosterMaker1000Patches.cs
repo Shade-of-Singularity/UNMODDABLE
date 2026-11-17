@@ -5,18 +5,20 @@ using UnityEngine;
 
 namespace Unmoddable;
 
+// Note: net472 doesn't allow placing patch attribute near the method itself.
+// (no matter how must I hate this)
+[HarmonyPatch(typeof(PosterMaker1000))]
 public static class PosterMaker1000Patches
 {
     [HarmonyPrefix]
-    [HarmonyPatch(typeof(PosterMaker1000), nameof(PosterMaker1000.SetupStickerButtons))]
-    public static void SetupStickerButtonsPrefix(PosterMaker1000 __instance)
+    [HarmonyPatch(nameof(PosterMaker1000.Awake))]
+    public static void AwakePrefix(PosterMaker1000 __instance)
     {
         int total = 0;
-        Debug.Log("Loading sprites...");
-        File.AppendAllText("boot.log", $"Loading sprites...\r\n");
+        $"Loading sprites...".Out();
         try
         {
-            string location = Path.Combine(ModsAPI.CommonContentDirectory, "Stickers");
+            string location = Path.Combine(ModsIO.CommonContentDirectory, "Stickers");
             Directory.CreateDirectory(location);
 
             foreach (string file in Directory.EnumerateFiles(location, "*.png", SearchOption.AllDirectories))
@@ -31,7 +33,7 @@ public static class PosterMaker1000Patches
         }
         catch (Exception ex)
         {
-            Debug.LogWarning("Failed to load stickers!\r\n" + ex.GetType().Name + ": " + ex.Message + "\r\n" + ex.StackTrace);
+            ex.Out($"Failed to load stickers!");
         }
     }
 }

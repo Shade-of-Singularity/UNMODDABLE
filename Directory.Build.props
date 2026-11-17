@@ -1,7 +1,16 @@
 <Project>
   <ItemDefinitionGroup>
     <Reference>
-      <!--<Private>false</Private>-->
+      <Private>false</Private>
     </Reference>
   </ItemDefinitionGroup>
+
+  <!--https://stackoverflow.com/questions/9194495/type-exists-in-2-assemblies-->
+  <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'Namespace.You.Want.To.Alias'">
+        <Aliases>NewAliasForNamespace</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
 </Project>

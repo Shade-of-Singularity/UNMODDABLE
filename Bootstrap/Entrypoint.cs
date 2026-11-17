@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 using Unmoddable;
 
 namespace Doorstop; // Do NOT rename! Doorstop entry-point identifier!
@@ -29,7 +28,9 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
         foreach (var loaded in AppDomain.CurrentDomain.GetAssemblies())
             AwaitedLibraries.Remove(loaded.FullName);
 
-        File.Delete("boot.log");
+        LoggingHelpers.Clear();
+        BootstrapMod.Initialize(); // Makes sure mod is initialized for logging purposes.
+
         // Waits until all game's DLLs are loaded:
         AppDomain.CurrentDomain.AssemblyLoad += HandleLoad;
     }
@@ -42,42 +43,18 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
             AwaitedLibraries = null;
             AppDomain.CurrentDomain.AssemblyLoad -= HandleLoad;
             Stopwatch stopwatch = Stopwatch.StartNew();
-            File.AppendAllText("boot.log", $"All native libraries located, initializing mods.\r\n");
+            BootstrapMod.Out($"Loading mods...");
             Initialize();
             var total = stopwatch.Elapsed;
-            File.AppendAllText("boot.log", $"Mods initialized successfully ({total:c})\r\n");
+            BootstrapMod.Out($"Mods loaded! ({total:c})");
             return;
-        }
-    }
-    public sealed class CustomUnityLogHandler : ILogHandler
-    {
-        public static readonly CustomUnityLogHandler Instance = new();
-        private CustomUnityLogHandler() { }
-
-        public void LogException(Exception exception, UnityEngine.Object context)
-        {
-            File.AppendAllText("run.log", $"{context}: [{exception.GetType().Name}] {exception.Message}\n{exception.StackTrace}");
-        }
-
-        public void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args)
-        {
-            if (args is null || args.Length == 0)
-            {
-                File.AppendAllText("run.log", $"{context}: {format}");
-            }
-            else
-            {
-                File.AppendAllText("run.log", $"{context}: {format} << {string.Join(", ", args)}");
-            }
         }
     }
 
     public static void Initialize()
     {
-        Directory.CreateDirectory(ModsAPI.ModsDirectory);
-        Directory.CreateDirectory(ModsAPI.CommonContentDirectory);
-
-        UnityEngine.Debug.unityLogger.logHandler = CustomUnityLogHandler.Instance;
+        Directory.CreateDirectory(ModsIO.ModsDirectory);
+        Directory.CreateDirectory(ModsIO.CommonContentDirectory);
 
         //Debug.developerConsoleEnabled = true;
         //Debug.developerConsoleVisible = true;
@@ -85,66 +62,66 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
             static a => a.GetReferencedAssemblies().Select(static a => a.FullName).ToHashSet());
 
         var native = AppDomain.CurrentDomain.GetAssemblies().Select(static a => a.GetName().Name).ToHashSet();
-        foreach (var file in Directory.GetFiles(ModsAPI.ModsDirectory, "*.dll", SearchOption.AllDirectories))
+        foreach (var file in Directory.GetFiles(ModsIO.ModsDirectory, "*.dll", SearchOption.AllDirectories))
         {
             try
             {
                 string extn = Path.GetFileNameWithoutExtension(file);
                 if (native.Contains(extn))
                 {
-                    File.AppendAllText("boot.log", $"Skipping native assembly: {extn}\r\n");
+                    BootstrapMod.Out($"Skipping native assembly: {extn}");
                     continue;
                 }
 
                 Assembly assembly = Assembly.LoadFrom(file);
                 string name = assembly.FullName;
                 map.TryAdd(name, assembly);
-                File.AppendAllText("boot.log", $"Located assembly: {name}\r\n");
+                BootstrapMod.Out($"Located assembly: {name}");
             }
             catch (Exception ex)
             {
-                File.AppendAllText("boot.log", $"Failed to load DLL!\n{ex.GetType()}: {ex.Message}\n{ex.StackTrace}\r\n");
+                BootstrapMod.Out(ex, $"Failed to load DLL!");
             }
         }
 
         Harmony.DEBUG = true;
         if (map.TryResolve(out var assemblies))
         {
-            File.AppendAllText("boot.log", $"Resolved total of ({assemblies.Count}) assemblies.\r\n");
             foreach (var assembly in map)
             {
                 try
                 {
+                    BootstrapMod.Out($"Analyzing '{assembly.GetName().Name}'...");
                     foreach (var type in assembly.GetTypes().Where(
                         static t => !t.IsAbstract && !t.ContainsGenericParameters && typeof(Mod).IsAssignableFrom(t)))
                     {
-                        File.AppendAllText("boot.log", $"Mod type found: {type.FullName}\r\n");
+                        BootstrapMod.Out($"- Mod type found: {type.FullName}");
                         Mods.Add((Mod)Activator.CreateInstance(type));
                     }
 
                     foreach (var module in assembly.GetModules())
                         RuntimeHelpers.RunModuleConstructor(module.ModuleHandle);
-                    File.AppendAllText("boot.log", $"Initialized '{assembly.GetName().Name}'\r\n");
+                    BootstrapMod.Out($"Initialized '{assembly.GetName().Name}'");
                 }
                 catch (Exception ex)
                 {
-                    File.AppendAllText("boot.log", $"Failed to initialize assembly! {assembly.FullName}" +
-                        $"\r\n{ex.GetType()}: {ex.Message}\r\n{ex.StackTrace}");
+                    BootstrapMod.Out(ex, $"Failed to initialize assembly!");
                 }
             }
         }
-        else File.AppendAllText("boot.log", $"Failed to resolve assemblies.\r\n");
+        else BootstrapMod.Out($"Failed to resolve assemblies.");
 
         foreach (var mod in Mods)
         {
             try
             {
+                BootstrapMod.Out($"Loading mod '{mod.Name}'...");
                 mod.Load();
-                File.AppendAllText("boot.log", $"Loaded mod '{mod.Name}'\r\n");
+                BootstrapMod.Out($"Mod loaded!");
             }
             catch (Exception ex)
             {
-                File.AppendAllText("boot.log", $"Failed to load mod! {mod.Name}\r\n{ex.GetType()}: {ex.Message}\r\n{ex.StackTrace}");
+                BootstrapMod.Out(ex, $"Failed to load mod!");
             }
         }
     }

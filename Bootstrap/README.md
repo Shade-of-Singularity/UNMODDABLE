@@ -10,3 +10,4 @@ Loads-in all the Assemblies, respecting their dependency order.
 # TODOs
 - Load DLLs from BOOTSTRAP directly instead of relying on UNMODDABLE providing DLLs.
 - Use Camelcase for names and assemblies (C#-compliance), but SCREAMING-case for visible mod names.
+- Merge UNMODDABLE and BOOTSTRAP. Move functions to OUTBREAK instead.
