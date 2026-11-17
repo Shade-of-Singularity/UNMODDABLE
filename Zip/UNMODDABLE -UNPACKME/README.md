@@ -1,5 +1,5 @@
 # UNMODDABLE
-UNMODDABLE - is UNBEATALBE modding system.
+UNMODDABLE - is UNBEATABLE modding system.
 
 This entry contains actual mods and mod content.
 
