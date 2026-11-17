@@ -48,7 +48,7 @@ Location:
 ## Configs folder
 This is where read-only configs are stored.
 
-This folder is shared with end-user, and synconized over GIT when people collab on modpacks.
+This folder is shared with end-user, and synchronized over GIT when people collab on modpacks.
 
 For data which is personalized for each player (i.e. volume settings, etc) - use Dynamics instead.
 
