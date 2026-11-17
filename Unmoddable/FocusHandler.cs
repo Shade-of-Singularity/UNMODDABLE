@@ -20,11 +20,12 @@ public sealed class FocusHandler : MonoBehaviour
 
     void TryPauseInArcade()
     {
-        if (JeffBezosController.pausedState != PausedState.None && JeffBezosController.canPause) return;
+        if (!JeffBezosController.canPause) return;
+        if (JeffBezosController.pausedState != PausedState.None) return;
 
         // Note: RhythmController.Instance is only set when playing any beatmap.
         // Note: _play can be replaced with GetHasStartedPlaying() method, in case they update it.
-        if (JeffBezosController.isPlayingBeatmap || (RhythmController.Instance is { _play: true }))
+        if (JeffBezosController.isPlayingBeatmap || (RhythmController.Instance is { _play: true, isInFinalHitSlowmo: false }))
         {
             var inst = JeffBezosController.instance;
             if (inst && inst.pauseMenu)
