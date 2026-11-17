@@ -53,7 +53,7 @@ public sealed class DependencyMap<TKey, TValue>(Func<TValue, ICollection<TKey>> 
     /// <summary>
     /// Map of all dependencies.
     /// </summary>
-    private readonly Dictionary<TKey, TValue> Map = [with(comparer ?? EqualityComparer<TKey>.Default)];
+    private readonly Dictionary<TKey, TValue> Map = new(comparer ?? EqualityComparer<TKey>.Default);
     /// <summary>
     /// Provides dependency requirements for each node.
     /// </summary>
