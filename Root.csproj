@@ -9,12 +9,15 @@
     <Compile Remove="Bootstrap\**" />
     <Compile Remove="Outbreak\**" />
     <Compile Remove="Unmoddable\**" />
+    <Compile Remove="Zip\**" />
     <EmbeddedResource Remove="Bootstrap\**" />
     <EmbeddedResource Remove="Outbreak\**" />
     <EmbeddedResource Remove="Unmoddable\**" />
+    <EmbeddedResource Remove="Zip\**" />
     <None Remove="Bootstrap\**" />
     <None Remove="Outbreak\**" />
     <None Remove="Unmoddable\**" />
+    <None Remove="Zip\**" />
   </ItemGroup>
 
 </Project>

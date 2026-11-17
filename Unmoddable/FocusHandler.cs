@@ -1,29 +1,34 @@
-﻿using UnityEngine;
+﻿using Rhythm;
+using UnityEngine;
 
 namespace Unmoddable;
 
 public sealed class FocusHandler : MonoBehaviour
 {
+    public bool IsFocused { get; private set; } = true;
+
+    public void Update()
+    {
+        if (!IsFocused) TryPauseInArcade();
+    }
+
     public void OnApplicationFocus(bool focused)
     {
-        if (!focused && JeffBezosController.isPlayingBeatmap && JeffBezosController.canPause)
+        IsFocused = focused;
+        if (!focused) TryPauseInArcade();
+    }
+
+    void TryPauseInArcade()
+    {
+        if (JeffBezosController.pausedState != PausedState.None && JeffBezosController.canPause) return;
+
+        // Note: RhythmController.Instance is only set when playing any beatmap.
+        // Note: _play can be replaced with GetHasStartedPlaying() method, in case they update it.
+        if (JeffBezosController.isPlayingBeatmap || (RhythmController.Instance is { _play: true }))
         {
-            switch (JeffBezosController.pausedState)
-            {
-                case PausedState.InPauseMenu:
-                    JeffBezosController.pausedState = PausedState.None;
-                    JeffBezosController.SetTimeScale(JeffBezosController.approachTimeScale);
-                    break;
-                case PausedState.InJournal:
-                    JeffBezosController.pausedState = PausedState.None;
-                    JeffBezosController.SetTimeScale(JeffBezosController.approachTimeScale);
-                    break;
-                case PausedState.None:
-                    var inst = JeffBezosController.instance;
-                    if (inst && inst.pauseMenu)
-                        JeffBezosController.pausedState = PausedState.InPauseMenu;
-                    break;
-            }
+            var inst = JeffBezosController.instance;
+            if (inst && inst.pauseMenu)
+                JeffBezosController.pausedState = PausedState.InPauseMenu;
         }
     }
 }

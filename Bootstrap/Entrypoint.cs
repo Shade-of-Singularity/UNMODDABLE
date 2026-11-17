@@ -44,17 +44,24 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
             AppDomain.CurrentDomain.AssemblyLoad -= HandleLoad;
             Stopwatch stopwatch = Stopwatch.StartNew();
             BootstrapMod.Out($"Loading mods...");
-            Initialize();
+            Initialize(out int totalMods);
             var total = stopwatch.Elapsed;
-            BootstrapMod.Out($"Mods loaded! ({total:c})");
+            if (totalMods == 0)
+                BootstrapMod.Out($"No mods found! Place mods at: {ModsIO.ModsDirectory} ({total:c})");
+            else
+                BootstrapMod.Out($"Mods loaded! (total: {totalMods}) (time: {total:c})");
             return;
         }
     }
 
-    public static void Initialize()
+    public static void Initialize(out int totalMods)
     {
+        Directory.CreateDirectory(ModsIO.UnmoddableDirectory);
         Directory.CreateDirectory(ModsIO.ModsDirectory);
         Directory.CreateDirectory(ModsIO.CommonContentDirectory);
+        Directory.CreateDirectory(ModsIO.ConfigurationsDirectory);
+        Directory.CreateDirectory(ModsIO.DynamicDataDirectory);
+        totalMods = 0;
 
         //Debug.developerConsoleEnabled = true;
         //Debug.developerConsoleVisible = true;
@@ -80,7 +87,7 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
             }
             catch (Exception ex)
             {
-                BootstrapMod.Out(ex, $"Failed to load DLL!");
+                BootstrapMod.Out(ex, $"Failed to load DLL! {Path.GetFileNameWithoutExtension(file)}");
             }
         }
 
@@ -117,6 +124,7 @@ class Entrypoint // Do NOT rename! Doorstop entry-point identifier!
             {
                 BootstrapMod.Out($"Loading mod '{mod.Name}'...");
                 mod.Load();
+                totalMods++;
                 BootstrapMod.Out($"Mod loaded!");
             }
             catch (Exception ex)
