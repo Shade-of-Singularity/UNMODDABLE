@@ -1,0 +1,71 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.1/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.1": {},
+    ".NETStandard,Version=v2.1/": {
+      "Outbreak/1.0.0": {
+        "dependencies": {
+          "MonoMod.Common": "22.6.3.1"
+        },
+        "runtime": {
+          "Outbreak.dll": {}
+        }
+      },
+      "MonoMod.Common/22.6.3.1": {
+        "dependencies": {
+          "System.ComponentModel.TypeConverter": "4.3.0"
+        }
+      },
+      "System.Collections.Specialized/4.3.0": {
+        "dependencies": {
+          "System.Globalization.Extensions": "4.3.0"
+        }
+      },
+      "System.ComponentModel.TypeConverter/4.3.0": {
+        "dependencies": {
+          "System.Collections.Specialized": "4.3.0"
+        }
+      },
+      "System.Globalization.Extensions/4.3.0": {}
+    }
+  },
+  "libraries": {
+    "Outbreak/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MonoMod.Common/22.6.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7CUFpelStpHwdWhIJrwyn56f1IXe3OLrNc9oytWIvBu6mAFT4ELqH1o9gVjmMIN6xf1KPl+OTYd0YRUP8wRZ9g==",
+      "path": "monomod.common/22.6.3.1",
+      "hashPath": "monomod.common.22.6.3.1.nupkg.sha512"
+    },
+    "System.Collections.Specialized/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Epx8PoVZR0iuOnJJDzp7pWvdfMMOAvpUo95pC4ScH2mJuXkKA2Y4aR3cG9qt2klHgSons1WFh4kcGW7cSXvrxg==",
+      "path": "system.collections.specialized/4.3.0",
+      "hashPath": "system.collections.specialized.4.3.0.nupkg.sha512"
+    },
+    "System.ComponentModel.TypeConverter/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-16pQ6P+EdhcXzPiEK4kbA953Fu0MNG2ovxTZU81/qsCd1zPRsKc3uif5NgvllCY598k6bI0KUyKW8fanlfaDQg==",
+      "path": "system.componentmodel.typeconverter/4.3.0",
+      "hashPath": "system.componentmodel.typeconverter.4.3.0.nupkg.sha512"
+    },
+    "System.Globalization.Extensions/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-FhKmdR6MPG+pxow6wGtNAWdZh7noIOpdD5TwQ3CprzgIE1bBBoim0vbR1+AWsWjQmU7zXHgQo4TWSP6lCeiWcQ==",
+      "path": "system.globalization.extensions/4.3.0",
+      "hashPath": "system.globalization.extensions.4.3.0.nupkg.sha512"
+    }
+  }
+}
